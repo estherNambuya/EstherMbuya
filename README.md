@@ -1,4 +1,4 @@
-# LBPH SYSTEM
+# Project description topic wise
 LBPH SYSTEM
 This project is aimed at solving recurrent cases of child abduction at maternity facilities.
 All it uses is LBPH face recognizer, a webcam (or IP Webcam), images of mothers and their respective babies.
