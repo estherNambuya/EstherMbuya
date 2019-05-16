@@ -1,0 +1,121 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[28]:
+
+
+import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+import math
+import cv2
+print('Enter Height of Base Station antenna(5,000 -70,000 meters):\n ')
+hb = float(input())
+
+if hb >= 5000:
+    if hb <= 70000:
+        print('Antenna height is %.4f meters :\n ' %hb)
+else:
+    print("You have selected BTS tower height outside the range\n ")
+    hb = 50
+    print('Your BTS tower height in kilometers is %.4f meters :\n ' %hb)
+
+hm = 0.001524  # antenna of mobile device in meters
+print('Enter the frequency of operation (700-1800 MHz) for 4G operation:\n ')
+f = int(input())
+
+if f >= 700:
+    if f <= 1800:
+        print('Your 4G frequency of operation is %d MHz:\n ' %f)
+else:
+    print("You have selected frequency outside the range")
+    f = 800
+    print('Your 4G frequency of operation is :\n ', f)
+c=3*10**8
+lamda = c/(f*10**6)      # in meters
+print("Your operating wavelength is %.4f meters \n"%lamda)
+print('Enter distance between you and nearest BTS (500-35000 meters):\n ')
+d = float(input())
+
+if d >= 500:
+    if d <= 35000:
+        print('The distance between you and nearest BTS %.4f meters:\n' %d)
+else:
+    print("The distance you selected cannot be understood")
+    d = 2
+    print('Your distance from BTS is %.4f meters:' %d)
+Gb = 8             # 8dB(BS antenna gain)
+Gm = 10 ** 0       # 0dB (Mobile antenna gain)
+
+# Calculations&Results
+free_atten = (4 * math.pi * d / lamda) ** 2 * (Gb * Gm) ** -1
+y = round(10 * math.log10(free_atten))
+print('Free space attenuation is %.4f dB \n' % y)
+Antenna_Reflection = (d ** 4 / (hb * hm) ** 2) * (Gb * Gm) ** -1
+x = round(10 * math.log10(Antenna_Reflection))
+print('Attenuation due to the reflecting surface is %.4f dB \n ' % x)
+
+Pt=10            #BS transmitted power in watts
+LTotal=8         #Total system losses in dB
+Noise_figure=5   #Mobile receiver noise figure in dB
+print('Input your current temperature in deg. celcius:')
+t=int(input())
+T=300+t          #temperature in degree kelvin
+BW=1.25*10**6    #in Hz
+#Gb=8;  #in dB
+#Gm=0;   #in dB
+#hb=30;  #in metres
+#hm=3.;   #in metres
+B=1.38*10**-23   #Boltzmann's constant
+
+#Calculations for SNR and recieved power
+
+Free_Lp=20*math.log10(hm*hb/d**2)
+Pr=Free_Lp-LTotal+Gm+Gb+Pt  #in dBW
+Te=T*(3.162-1)
+Pn=B*(Te+T)*BW
+R=10*math.log10(Pn)
+print('Received signal power is %.4f dBW \n' %R)
+SNR=Pr-R
+print('The SNR ratio is %.4f dB \n'  %(round(SNR)))
+Y=4;# path loss exponent
+Shadow=10.5;
+Lp=150;  #in dB
+d0=100.;#in metres
+P0=-32;   #in dBm
+Pr=P0+10*Y*math.log10(d0/d)+Shadow;
+print('Received power is %.1f dBm \n'%Pr)
+path_loss=10*math.log10(Pt*1000)-Pr;
+print('The allowable path loss is %.1f dB \n'%path_loss)
+dist=np.array([1,5, 10, 15, 20, 25,30,35])
+m=10 * np.log10((4 * math.pi * dist / lamda) ** 2 * (Gb * Gm) ** -1)
+#pl=10 * math.log10(m)
+#pl=np.array([0, 0, 0, 0, 0,0,0])
+
+
+pl=np.array(m)
+fig,ax1 = plt.subplots()
+ax1.set_xlabel('Distance between mobile phone and BTS(in km)')
+ax1.set_ylabel('Path loss (in dB)')
+ax1.plot(dist,pl,'m')
+ax1.legend(['Free Space Loss Vs Distance'],loc=0)
+plt.show()
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
